@@ -1,2 +1,2 @@
-"# Wednesday Practice" 
+# Wednesday Practice
 
