@@ -8,10 +8,67 @@ from .forms import VenueForm, EventForm
 from django.http import HttpResponse
 import csv
 
+# For PDF
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+
+
 # Create your views here.
+# Have to pip install  reportlab for pdf, because django or python does not have this
+# Generate pdf file venue list
+def venue_pdf(request):
+    # Create a Bytestream buffer
+    buf = io.BytesIO()
+    # Create a Canvas
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    # Create a text object
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 14)
+
+    # Add some lines of text
+    # lines = [
+    #     "This is line 1",
+    #     "This is line 1",
+    #     "This is line 1",
+    # ]
+
+    # Designate the model
+    venues = Venue.objects.all()
+
+    lines = []
+    for venue in venues:
+        lines.append(venue.name)
+        lines.append(venue.address)
+        lines.append(venue.zip_code)
+        lines.append(venue.phone)
+        lines.append(venue.web)
+        lines.append(venue.email_address)
+        lines.append("====================")
 
 
-# Generate text file venue list
+    for line in lines:
+        textob.textLine(line)
+
+    
+    # Finish up
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+
+    return FileResponse(buf, as_attachment=True, filename="venue.pdf")
+
+
+
+
+
+
+
+# Generate csv file venue list
 def venue_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=venues.csv'
