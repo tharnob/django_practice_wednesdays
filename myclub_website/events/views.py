@@ -15,6 +15,12 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
+# Import pagination stuff
+from django.core.paginator import Paginator
+
+
+
+
 
 # Create your views here.
 # Have to pip install  reportlab for pdf, because django or python does not have this
@@ -196,9 +202,19 @@ def show_venue(request, venue_id):
 
 
 def list_venues(request):
-    venue_list = Venue.objects.all().order_by('?') #randomize order
+    #venue_list = Venue.objects.all().order_by('?') #randomize order
+    venue_list = Venue.objects.all()
+
+    # Set up paginaion
+    p = Paginator(Venue.objects.all(), 2)
+    page = request.GET.get('page')
+    venues = p.get_page(page)
+    nums = "a" * venues.paginator.num_pages
+
     context = {
         "venue_list" : venue_list,
+        "venues" : venues,
+        "nums" : nums,
     }
     return render(request, 'venues.html', context)
 
