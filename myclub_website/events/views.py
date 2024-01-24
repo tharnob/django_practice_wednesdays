@@ -5,8 +5,31 @@ from datetime import datetime
 from django.http import HttpResponseRedirect
 from .models import Event, Venue
 from .forms import VenueForm, EventForm
+from django.http import HttpResponse
+
 
 # Create your views here.
+
+# Generate text file venue list
+
+def venue_text(request):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=venues.txt'
+
+    # Designate the model
+
+    venues = Venue.objects.all()
+    lines = []
+    for venue in venues:
+        lines.append(f'{venue.name}\n{venue.address}\n{venue.zip_code}\n{venue.phone}\n{venue.web}\n{venue.email_address}\n\n\n')
+
+    #lines = ['This is line 1\n', 'This is line 3\n', 'This is line 3\n']
+
+    # Write to textfile
+    response.writelines(lines)
+    return response
+
+
 
 def delete_venue(request, venue_id):
     venue = Venue.objects.get(pk=venue_id)
