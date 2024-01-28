@@ -4,8 +4,11 @@ from calendar import HTMLCalendar
 from datetime import datetime
 from django.http import HttpResponseRedirect
 from .models import Event, Venue
+# Importing user model from django
+from django.contrib.auth.models import User
 from .forms import VenueForm, EventForm, EventFormAdmin
 from django.http import HttpResponse
+from django.contrib import messages
 import csv
 
 # For PDF
@@ -124,8 +127,15 @@ def delete_venue(request, venue_id):
 
 def delete_event(request, event_id):
     event = Event.objects.get(pk=event_id)
-    event.delete()
-    return redirect('list-events')
+    if request.user == event.manager:
+        event.delete()
+        messages.success(request, ("Event Deleted!"))
+        return redirect('list-events')
+    else:
+        messages.success(request, ("You Aren't Authorized To Delete This Event!"))
+        return redirect('list-events')
+
+
 
 
 
@@ -135,7 +145,7 @@ def update_event(request, event_id):
         form = EventFormAdmin(request.POST or None, instance=event)
     else:
         form = EventForm(request.POST or None, instance=event)
-        
+
     if form.is_valid():
         form.save()
         return redirect('list-events')
@@ -211,8 +221,10 @@ def search_venues(request):
 
 def show_venue(request, venue_id):
     venue = Venue.objects.get(pk=venue_id)
+    venue_owner = User.objects.get(pk=venue.owner)
     context = {
         "venue" : venue,
+        "venue_owner" : venue_owner,
     }
     return render(request, 'show_venue.html', context)
 
