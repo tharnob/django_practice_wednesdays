@@ -29,8 +29,35 @@ class VenueForm(ModelForm):
             'email_address': forms.EmailInput(attrs={'class': 'form-control', 'placeholder' : 'Email'}),
         }
 
-
+# User Event Form
+        
 class EventForm(ModelForm):
+    # Meta is a django thing!
+    class Meta:
+        model = Event
+        fields = ('name', 'event_date', 'venue', 'attendees', 'description')
+        
+        # Add labels to the form
+        labels = {
+            'name': '',
+            'event_date': 'YYYY-MM-DD HH:MM:SS',
+            'venue': 'Venue',
+            'attendees': 'Attendees',
+            'description': '',
+        }
+        # Add styles to the form
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder' : 'Event Name'}),
+            'event_date': forms.TextInput(attrs={'class': 'form-control', 'placeholder' : 'Event Date'}),
+            'venue': forms.Select(attrs={'class': 'form-select', 'placeholder' : 'Venue'}),
+            'attendees': forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder' : 'Attendees'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder' : 'Description'}),
+        }
+
+
+# Admin Superuser Event Form
+        
+class EventFormAdmin(ModelForm):
     # Meta is a django thing!
     class Meta:
         model = Event
@@ -54,5 +81,3 @@ class EventForm(ModelForm):
             'attendees': forms.SelectMultiple(attrs={'class': 'form-control', 'placeholder' : 'Attendees'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder' : 'Description'}),
         }
-
-
