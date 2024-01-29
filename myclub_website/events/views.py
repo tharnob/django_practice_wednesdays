@@ -24,6 +24,20 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 
+def search_events(request):
+    if request.method == "POST":
+        searched = request.POST['searched']
+        events = Event.objects.filter(description__contains=searched)
+        context = {
+            "searched" : searched,
+            "events" : events,
+        }
+        return render(request, 'search_events.html', context)
+    else:
+        return render(request, 'search_events.html', {}) 
+
+
+
 def my_events(request):
     me = request.user.id
     events = Event.objects.filter(attendees = me)
