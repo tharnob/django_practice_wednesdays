@@ -22,10 +22,25 @@ from reportlab.lib.pagesizes import letter
 from django.core.paginator import Paginator
 
 
-
-
-
 # Create your views here.
+
+def my_events(request):
+    me = request.user.id
+    events = Event.objects.filter(attendees = me)
+    context = {
+        "events" : events,
+
+    }
+    if request.user.is_authenticated:
+        return render(request, 'my_events.html', context)
+    else:
+        messages.success(request, ("You Aren't Authorized To View This Page!"))
+        return redirect('home')
+
+
+
+
+
 # Have to pip install  reportlab for pdf, because django or python does not have this
 # Generate pdf file venue list
 def venue_pdf(request):
