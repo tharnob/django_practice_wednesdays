@@ -24,10 +24,19 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 
+
 def admin_approval(request):
+    # Get Counts
+    event_count = Event.objects.all().count()
+    venue_count = Venue.objects.all().count()
+    user_count = User.objects.all().count()
+
     event_list = Event.objects.all().order_by("-event_date")
     context = {
         "event_list" : event_list,
+        "event_count" : event_count,
+        "venue_count" : venue_count,
+        "user_count" : user_count,
     }
     if request.user.is_superuser:
         if request.method == "POST":
@@ -36,7 +45,7 @@ def admin_approval(request):
             # Uncheck all events.
             # Because uncheck don't return any value like check is True 
             event_list.update(approved=False)
-            
+
             # Update the database
             for x in id_list:
                 Event.objects.filter(pk=int(x)).update(approved=True)
