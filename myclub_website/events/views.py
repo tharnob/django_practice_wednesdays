@@ -24,6 +24,37 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 
+def admin_approval(request):
+    event_list = Event.objects.all().order_by("-event_date")
+    context = {
+        "event_list" : event_list,
+    }
+    if request.user.is_superuser:
+        if request.method == "POST":
+            id_list = request.POST.getlist('boxes')
+            
+            # Uncheck all events.
+            # Because uncheck don't return any value like check is True 
+            event_list.update(approved=False)
+            
+            # Update the database
+            for x in id_list:
+                Event.objects.filter(pk=int(x)).update(approved=True)
+
+
+            messages.success(request, ("Event List Approval Has Been Updated!"))
+            return redirect('list-events')
+        else:
+            return render(request, "admin_approval.html", context)
+    else:
+        messages.success(request, ("You aren't authorized to view this page!"))
+        return redirect('home')
+
+
+    return render(request, "admin_approval.html", context)
+
+
+
 def search_events(request):
     if request.method == "POST":
         searched = request.POST['searched']
