@@ -345,7 +345,7 @@ def home(request, year=datetime.now().year, month=datetime.now().strftime('%B'))
 
 
 def all_events(request):
-    event_list = Event.objects.all().order_by('event_date', 'name')
+    event_list = Event.objects.all().order_by('-event_date', 'name')
     context = {
         "event_list" : event_list,
     }
