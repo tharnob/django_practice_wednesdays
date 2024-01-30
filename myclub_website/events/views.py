@@ -281,7 +281,7 @@ def add_venue(request):
 
     submitted = False
     if request.method == "POST":
-        form = VenueForm(request.POST)
+        form = VenueForm(request.POST, request.FILES)
         if form.is_valid():
             # Saving something in the field without user input
             venue = form.save(commit=False) # save but not yet

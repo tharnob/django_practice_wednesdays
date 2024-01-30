@@ -9,7 +9,7 @@ class VenueForm(ModelForm):
     # Meta is a django thing!
     class Meta:
         model = Venue
-        fields = ('name', 'address', 'zip_code', 'phone', 'web', 'email_address')
+        fields = ('name', 'address', 'zip_code', 'phone', 'web', 'email_address', 'venue_image')
         # Add labels to the form
         labels = {
             'name': '',
@@ -18,6 +18,7 @@ class VenueForm(ModelForm):
             'phone': '',
             'web': '',
             'email_address': '',
+            'venue_image' : '',
         }
         # Add styles to the form
         widgets = {
