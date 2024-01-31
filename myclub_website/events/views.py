@@ -24,8 +24,37 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 
+def venue_events(request, venue_id):
+    # Grab the venue
+    venue = Venue.objects.get(id=venue_id)
+    # Grab the events from that venue
+    events = venue.event_set.all()
+    context = {
+        "events" : events,
+    }
+    if events:
+        return render(request, 'venue_events.html', context)
+    else:
+        messages.success(request, ("That Venue Has No Events At This Time..."))
+        return redirect('admin-approval')
 
+
+
+# Show Event
+def show_event(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    context = {
+        "event" : event,
+    }
+    return render(request, 'show_event.html', context)
+
+
+
+
+# Show Events In A Venue
 def admin_approval(request):
+    # Get The Venues
+    venue_list = Venue.objects.all()
     # Get Counts
     event_count = Event.objects.all().count()
     venue_count = Venue.objects.all().count()
@@ -37,6 +66,7 @@ def admin_approval(request):
         "event_count" : event_count,
         "venue_count" : venue_count,
         "user_count" : user_count,
+        "venue_list" : venue_list,
     }
     if request.user.is_superuser:
         if request.method == "POST":
